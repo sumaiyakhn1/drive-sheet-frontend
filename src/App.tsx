@@ -70,11 +70,12 @@ function App() {
         setProgress(100);
         setNotification("✅ Excel file downloaded successfully!");
       } else {
+        const errorData = await res.json().catch(() => null);
         setProgress(100);
-        setNotification("❌ Error generating Excel file.");
+        setNotification(`❌ Error: ${errorData?.detail || "Error generating Excel file"}`);
       }
-    } catch (err) {
-      setNotification("❌ Server error. Check backend or Render logs.");
+    } catch (err: any) {
+      setNotification(`❌ Server error: ${err.message || "Check backend or Render logs."}`);
     }
 
     setLoading(false);
