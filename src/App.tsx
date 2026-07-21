@@ -20,16 +20,12 @@ function extractGoogleId(input: string): string {
   const fileMatch = input.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (fileMatch) return fileMatch[1];
 
-  // Sheet URL
-  const sheetMatch = input.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-  if (sheetMatch) return sheetMatch[1];
 
   return input.trim();
 }
 
 function App() {
   const [folderInput, setFolderInput] = useState("");
-  const [sheetInput, setSheetInput] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -38,12 +34,11 @@ function App() {
   // IMPORTANT — USE YOUR RENDER BACKEND
   const API_BASE = "https://drive-to-sheet-backend.onrender.com";
 
-  async function handleSync() {
+  async function handleDownloadExcel() {
     const folderId = extractGoogleId(folderInput);
-    const sheetId = extractGoogleId(sheetInput);
 
-    if (!folderId || !sheetId) {
-      setNotification("❌ Please enter valid Google Drive or Sheet URLs / IDs.");
+    if (!folderId) {
+      setNotification("❌ Please enter a valid Google Drive folder URL or ID.");
       return;
     }
 
@@ -52,23 +47,31 @@ function App() {
     setProgress(20);
 
     try {
-      const res = await fetch(`${API_BASE}/sync`, {
+      const res = await fetch(`${API_BASE}/generate-excel`, {
         method: "POST",
         body: new URLSearchParams({
           folder_id: folderId,
-          sheet_id: sheetId,
         }),
       });
 
       setProgress(70);
 
-      const data = await res.json();
-      setProgress(100);
-
-      if (data.ok) {
-        setNotification(`✅ Synced ${data.count} files successfully!`);
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "drive_files.xlsx";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        
+        setProgress(100);
+        setNotification("✅ Excel file downloaded successfully!");
       } else {
-        setNotification(`❌ Error: ${data.error || "Unknown error"}`);
+        setProgress(100);
+        setNotification("❌ Error generating Excel file.");
       }
     } catch (err) {
       setNotification("❌ Server error. Check backend or Render logs.");
@@ -81,13 +84,13 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Okie Dokie Sync Tool</h1>
+      <h1>Okie Dokie Drive to Excel</h1>
 
       <p className="subtitle">
-        This tool automatically syncs <b>Google Drive files</b> into a  
-        <b>Google Sheet</b>.  
+        This tool automatically generates an <b>Excel Sheet</b> from your  
+        <b>Google Drive files</b>.  
         <br />
-        Make sure the Drive folder and Sheet are owned by:
+        Make sure the Drive folder is owned by:
         <br />
         <b>okiedokie@rksdcollege.ac.in</b>
       </p>
@@ -101,16 +104,8 @@ function App() {
           onChange={(e) => setFolderInput(e.target.value)}
         />
 
-        <label>Google Sheet URL or ID</label>
-        <input
-          type="text"
-          placeholder="Paste Sheet URL or ID"
-          value={sheetInput}
-          onChange={(e) => setSheetInput(e.target.value)}
-        />
-
-        <button onClick={handleSync} disabled={loading}>
-          {loading ? "Syncing..." : "Sync Now"}
+        <button onClick={handleDownloadExcel} disabled={loading}>
+          {loading ? "Generating Excel..." : "Download Excel"}
         </button>
 
         {progress > 0 && (
