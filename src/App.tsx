@@ -87,12 +87,7 @@ function App() {
       <h1>Okie Dokie Drive to Excel</h1>
 
       <p className="subtitle">
-        This tool automatically generates an <b>Excel Sheet</b> from your  
-        <b>Google Drive files</b>.  
-        <br />
-        Make sure the Drive folder is owned by:
-        <br />
-        <b>okiedokie@rksdcollege.ac.in</b>
+        This tool automatically generates an <b>Excel Sheet</b> from your publicly shared <b>Google Drive folder</b>.  
       </p>
 
       <div className="card">

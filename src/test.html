@@ -1,0 +1,315 @@
+<style>
+    :host ::ng-deep ngx-barcode>div>canvas {
+        width: 180px !important;
+        height: 40px !important;
+    }
+
+    .id-card-container {
+        width: 320px;
+        height: 480px;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        background-color: #fff;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+        position: relative;
+        overflow: hidden;
+        margin: 10px;
+        page-break-inside: avoid;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+        display: flex;
+        padding: 8px 8px 0 8px;
+        align-items: center;
+    }
+
+    .logo {
+        width: 55px;
+        height: 55px;
+        margin-right: 5px;
+    }
+
+    .header-text {
+        flex: 1;
+        text-align: left;
+        margin-left: 2px;
+    }
+
+    .institute-name {
+        font-size: 12px;
+        font-weight: bold;
+        color: #1a4d2e;
+        line-height: 1.1;
+        margin-bottom: 2px;
+    }
+
+    .affiliated-text {
+        font-size: 6px;
+        color: #555;
+        line-height: 1.1;
+    }
+
+    .autonomous-box {
+        border: 1px solid #1a4d2e;
+        font-size: 7px;
+        padding: 2px 4px;
+        display: inline-block;
+        margin: 3px 0;
+        color: #1a4d2e;
+    }
+
+    .address-header {
+        font-size: 7px;
+        color: #444;
+        text-align: center;
+        line-height: 1.2;
+        padding: 0 10px;
+    }
+
+    .divider {
+        border-top: 1px solid #8b0000;
+        margin: 4px 0;
+    }
+
+    .photo-container {
+        text-align: center;
+        margin: 5px 0;
+    }
+
+    .photo-container img {
+        width: 95px;
+        height: 120px;
+        border: 2px solid #3b823b;
+        object-fit: cover;
+    }
+
+    .info-section {
+        padding: 0 15px;
+        font-size: 10px;
+        line-height: 1.4;
+        color: #000;
+    }
+
+    .info-row {
+        display: flex;
+        margin-bottom: 2px;
+        align-items: center;
+    }
+
+    .label-col {
+        color: #22589A;
+        font-weight: bold;
+        width: 48px;
+        flex-shrink: 0;
+    }
+
+    .colon {
+        color: #22589A;
+        font-weight: bold;
+        width: 10px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .val-col {
+        color: #333;
+        font-weight: bold;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .val-col-wrap {
+        color: #333;
+        font-weight: bold;
+        flex: 1;
+        white-space: normal;
+        line-height: 1.2;
+    }
+
+    .barcode-section {
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .reg-no-text {
+        font-size: 11px;
+        font-weight: bold;
+        margin-top: -2px;
+    }
+
+    .courses-offered {
+        text-align: center;
+        font-size: 7px;
+        margin-top: 5px;
+        line-height: 1.2;
+    }
+
+    .courses-title {
+        font-size: 9px;
+        font-weight: bold;
+    }
+
+    .validity {
+        text-align: center;
+        color: #8b0000;
+        font-weight: bold;
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background-color: #3b823b;
+        color: white;
+        font-size: 9px;
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 10px;
+        box-sizing: border-box;
+        font-weight: bold;
+    }
+
+    .footer-director {
+        color: #22589A;
+        background-color: transparent;
+        position: absolute;
+        right: 10px;
+        bottom: 4px;
+        font-weight: bold;
+        font-size: 10px;
+    }
+
+    .director-signature {
+        position: absolute;
+        right: 10px;
+        bottom: 15px;
+        width: 40px;
+        height: 20px;
+    }
+</style>
+
+<div class="row">
+    <div *ngFor="let displayData of displayDataArray" style="display: inline-block;">
+        <div class="id-card-container">
+
+            <!-- Header -->
+            <div class="header">
+                <img [src]="displayData.logo" class="logo" alt="Logo"
+                    style="object-fit: contain; width: 35px; height: 35px;">
+                <div class="header-text">
+                    <div class="institute-name">PANIPAT INSTITUTE OF<br>ENGINEERING & TECHNOLOGY</div>
+                    <div class="affiliated-text">(Approved by AICTE, New Delhi & Affiliated to Kurukshetra University,
+                        Kurukshetra)</div>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="autonomous-box">AN AUTONOMOUS INSTITUTE</div>
+            </div>
+
+            <div class="address-header">
+                70 MILE STONE, G.T. ROAD, PATTIKALYANA, SAMALKHA<br>
+                PANIPAT (HARYANA) PH: 0180-2569699, 2569799
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Photo -->
+            <div class="photo-container">
+                <img [src]="displayData.takerPhoto" alt="Student Photo">
+            </div>
+
+            <!-- Information -->
+            <div class="info-section">
+
+                <div class="info-row">
+                    <div class="label-col">Name</div>
+                    <div class="colon">:</div>
+                    <div class="val-col">{{displayData.studentName}}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="label-col">Roll No.</div>
+                    <div class="colon">:</div>
+                    <div class="val-col">{{displayData.studentRegNo}}</div>
+                </div>
+
+                <div class="info-row">
+                    <div style="display: flex; width: 40%;">
+                        <div class="label-col" style="width: 30px;">ABO</div>
+                        <div class="colon">:</div>
+                        <div class="val-col">{{displayData.bloodGroup}}</div>
+                    </div>
+                    <div style="display: flex; width: 60%;">
+                        <div class="label-col" style="width: 42px;">Course</div>
+                        <div class="colon" style="width: 8px;">:</div>
+                        <div class="val-col" style="font-size: 9px;">{{displayData.studentCourse}} <span
+                                *ngIf="displayData.studentCourse !== displayData.studentStream">-
+                                {{displayData.studentStream}}</span></div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div style="display: flex; width: 42%;">
+                        <div class="label-col" style="width: 30px;">D.O.B</div>
+                        <div class="colon">:</div>
+                        <div class="val-col">{{displayData.dob | date: 'dd.MM.yyyy'}}</div>
+                    </div>
+                    <div style="display: flex; width: 58%;">
+                        <div class="label-col" style="width: 62px;">Contact No.</div>
+                        <div class="val-col">{{displayData.fatherMobile}}</div>
+                    </div>
+                </div>
+
+                <div class="info-row" style="margin-top: 1px;">
+                    <div class="label-col" style="width: 50px;">Address</div>
+                    <div class="val-col" style="padding-left: 5px;">{{displayData.fatherName}}</div>
+                </div>
+
+                <div class="info-row" style="margin-bottom: 0;">
+                    <div class="val-col-wrap">{{displayData.studentAddress}}</div>
+                </div>
+
+            </div>
+
+            <!-- Barcode -->
+            <div class="barcode-section">
+                <ngx-barcode [bc-format]="displayData.format" [bc-element-type]="displayData.type"
+                    [bc-value]="displayData.regNo" [bc-display-value]="false" [bc-width]="1.5" [bc-height]="30">
+                </ngx-barcode>
+                <div class="reg-no-text">{{displayData.regNo || displayData.studentRegNo}}</div>
+            </div>
+
+            <!-- Footer Info -->
+            <div class="courses-offered">
+                <div class="courses-title">COURSES OFFERED</div>
+                <div>B.Tech, BBA, BCA, B Pharma, D Pharma, Diploma</div>
+                <div>MCA, MBA, Ph.D (Comp. App.), Ph.D. (MBA)</div>
+            </div>
+
+            <div class="validity">
+                Valid Up - To : July {{
+                (displayData.studentCourse === 'B.Tech' || displayData.studentCourse === 'B.Pharmacy' ||
+                displayData.studentCourse === 'B.pharmcy') ? '2030' :
+                (displayData.studentCourse === 'BBA' || displayData.studentCourse === 'BCA') ? '2029' :
+                (displayData.studentCourse === 'MBA' || displayData.studentCourse === 'MCA' || displayData.studentCourse
+                === 'Diploma' || displayData.studentCourse === 'D.Pharmacy' || displayData.studentCourse ===
+                'D.phamrcy') ? '2028' : '2029'
+                }}
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="footer">
+                <div>website: www.piet.co.in</div>
+            </div>
+            <div class="footer-director">Director</div>
+
+        </div>
+    </div>
+</div>
