@@ -31,7 +31,7 @@ function App() {
   const [progress, setProgress] = useState(0);
   const [notification, setNotification] = useState("");
 
-  // IMPORTANT — USE YOUR RENDER BACKEND
+  // Deployed Render backend URL
   const API_BASE = "https://drive-to-sheet-backend.onrender.com";
 
   async function handleDownloadExcel() {
