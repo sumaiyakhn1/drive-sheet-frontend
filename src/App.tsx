@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 // ------------------------------
@@ -30,9 +30,28 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [notification, setNotification] = useState("");
+  const [totalCount, setTotalCount] = useState<number | null>(null);
 
-  // Deployed Render backend URL
+  // Deployed Render backend URL or fallback to window origin if served locally
   const API_BASE = "https://drive-to-sheet-backend.onrender.com";
+
+  const fetchStats = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/stats`);
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.total_generations === "number") {
+          setTotalCount(data.total_generations);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not fetch generation stats:", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   async function handleDownloadExcel() {
     const folderId = extractGoogleId(folderInput);
@@ -69,6 +88,9 @@ function App() {
         
         setProgress(100);
         setNotification("✅ Excel file downloaded successfully!");
+
+        // Refresh generation stats immediately
+        fetchStats();
       } else {
         const errorData = await res.json().catch(() => null);
         setProgress(100);
@@ -116,6 +138,15 @@ function App() {
       <footer>
         Crafted with ❤️ by <b>Okie Dokie</b>
       </footer>
+
+      {/* Floating Bottom-Right Counter Widget */}
+      <div className="bottom-right-counter" title="Total Excel Sheets Generated">
+        <span className="counter-icon">📊</span>
+        <div className="counter-text">
+          <span className="counter-label">Excel Generated</span>
+          <span className="counter-value">{totalCount !== null ? totalCount : "..."}</span>
+        </div>
+      </div>
     </div>
   );
 }
