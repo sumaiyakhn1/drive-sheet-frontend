@@ -27,12 +27,11 @@ function extractGoogleId(input: string): string {
 function App() {
   const [folderInput, setFolderInput] = useState("");
 
-  const [loading, setLoading] = useState(false);
+  const [loadingType, setLoadingType] = useState<"thumbnail" | "viewable" | null>(null);
   const [progress, setProgress] = useState(0);
   const [notification, setNotification] = useState("");
   const [totalCount, setTotalCount] = useState<number | null>(null);
 
-  // Deployed Render backend URL or fallback to window origin if served locally
   const API_BASE = "https://drive-to-sheet-backend.onrender.com";
 
   const fetchStats = async () => {
@@ -53,7 +52,7 @@ function App() {
     fetchStats();
   }, []);
 
-  async function handleDownloadExcel() {
+  async function handleDownloadExcel(excelType: "thumbnail" | "viewable") {
     const folderId = extractGoogleId(folderInput);
 
     if (!folderId) {
@@ -61,7 +60,7 @@ function App() {
       return;
     }
 
-    setLoading(true);
+    setLoadingType(excelType);
     setNotification("");
     setProgress(20);
 
@@ -70,6 +69,7 @@ function App() {
         method: "POST",
         body: new URLSearchParams({
           folder_id: folderId,
+          excel_type: excelType,
         }),
       });
 
@@ -80,14 +80,18 @@ function App() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "drive_files.xlsx";
+        a.download = `drive_files_${excelType}.xlsx`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
         
         setProgress(100);
-        setNotification("✅ Excel file downloaded successfully!");
+        setNotification(
+          excelType === "thumbnail"
+            ? "✅ Thumbnail Excel downloaded."
+            : "✅ Viewable Excel downloaded. Use its Drive links to open PDFs."
+        );
 
         // Refresh generation stats immediately
         fetchStats();
@@ -100,7 +104,7 @@ function App() {
       setNotification(`❌ Server error: ${err.message || "Check backend or Render logs."}`);
     }
 
-    setLoading(false);
+    setLoadingType(null);
 
     setTimeout(() => setProgress(0), 1500);
   }
@@ -110,7 +114,7 @@ function App() {
       <h1>Okie Dokie Drive to Excel</h1>
 
       <p className="subtitle">
-        This tool automatically generates an <b>Excel Sheet</b> from your publicly shared <b>Google Drive folder</b>.  
+        Choose which Excel file to download from your publicly shared <b>Google Drive folder</b>. Use the viewable file to open PDFs in Google Drive.
       </p>
 
       <div className="card">
@@ -122,8 +126,15 @@ function App() {
           onChange={(e) => setFolderInput(e.target.value)}
         />
 
-        <button onClick={handleDownloadExcel} disabled={loading}>
-          {loading ? "Generating Excel..." : "Download Excel"}
+        <button onClick={() => handleDownloadExcel("thumbnail")} disabled={loadingType !== null}>
+          {loadingType === "thumbnail" ? "Generating..." : "Download Thumbnail Excel"}
+        </button>
+        <button
+          className="secondary-button"
+          onClick={() => handleDownloadExcel("viewable")}
+          disabled={loadingType !== null}
+        >
+          {loadingType === "viewable" ? "Generating..." : "Download Viewable Excel"}
         </button>
 
         {progress > 0 && (
