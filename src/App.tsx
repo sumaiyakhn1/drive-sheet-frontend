@@ -32,7 +32,7 @@ function App() {
   const [notification, setNotification] = useState("");
   const [totalCount, setTotalCount] = useState<number | null>(null);
 
-  const API_BASE = "https://drive-to-sheet-backend.onrender.com";
+  const API_BASE = process.env.REACT_APP_API_BASE || "https://drive-to-sheet-backend.onrender.com";
 
   const fetchStats = async () => {
     try {
