@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./App.css";
 
 // ------------------------------
@@ -34,7 +34,7 @@ function App() {
 
   const API_BASE = process.env.REACT_APP_API_BASE || "https://drive-to-sheet-backend.onrender.com";
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const res = await fetch(`${API_BASE}/stats`);
       if (res.ok) {
@@ -46,11 +46,11 @@ function App() {
     } catch (e) {
       console.warn("Could not fetch generation stats:", e);
     }
-  };
+  }, [API_BASE]);
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [fetchStats]);
 
   async function handleDownloadExcel(excelType: "thumbnail" | "viewable") {
     const folderId = extractGoogleId(folderInput);
